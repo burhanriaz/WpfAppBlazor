@@ -1,85 +1,47 @@
 ﻿@using System.Windows.Documents
 @using System.Windows
-<h3>PrintText</h3>
+@using System.Printing
+@using System.Drawing
+<h3 >Print Text</h3>
 <Button Width="200" @onclick="PrintPopUp">Print</Button>
 
 @*<button class="btn btn-primary" @onclick="PrintPopUp">PrintPopUp</button>*@
 
 @if (ShowPopup)
 {
-    
     <form>
-         <div class="modal" tabindex="-1" style="display:block" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">Print files </h3>
-                    <!-- Button to close the popup -->
-                <button type="button" class="close" @onclick="ClosePopup">
-                        <span aria-hidden="true">X</span>
-                    </button>
-                </div>
-        <label>Choose a page Size1:</label>
-        <select @onchange="DoStuff">  @*//pre-3.0 versions: onchange=@DoStuff*@
-            @foreach (var template in templates)
-            {
-                <option value=@template>@template</option>
-            }
-        </select>
-          <button class="btn btn-primary" @onclick="PrintDoc"> PrintDoc</button>
-                </div>
-            </div>
-        </div>
-    
-    </form>
-}@*
-@if (ShowPopup)
-{
-    <!-- This is the popup to create or edit a forecast -->
-    <div class="modal" tabindex="-1" style="display:block" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">Print files </h3>
-                    <!-- Button to close the popup -->
-                <button type="button" class="close" @onclick="ClosePopup">
-                        <span aria-hidden="true">X</span>
-                    </button>
-                </div>
-                <!-- Edit form for the current forecast -->
-
-            <div class="modal-body">
-                    <input class="form-control" type="checkbox" placeholder="Page Size" />
-
-                    <br />
-                    <label>Choose a page Size:</label>
-                    <select name="PageSize" id="PageSize">
-                        <option  value="A4">A4</option>
-                        <option value="Letter">Letter</option>
+        <div class="modal" tabindex="-1" style="display:block" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Print files </h3>
+                        <!-- Button to close the popup -->
+                    <button type="button" class="close" @onclick="ClosePopup">
+                            <span aria-hidden="true">X</span>
+                        </button>
+                    </div>
+                    <label>Choose a page Size1:</label>
+                    <select @onchange="DoStuff">
+                        @*//pre-3.0 versions: onchange=@DoStuff*@
+                        @foreach (var template in templates)
+                        {
+                            <option value=@template>@template</option>
+                        }
                     </select>
-                    <!-- Button to save the forecast -->
-                <button class="btn btn-primary" @onclick="InvokePrint"> InvokePrint </button>
+                    <button type="submit" class="btn btn-primary" @onclick="PrintDoc"> PrintDoc</button>
                 </div>
             </div>
         </div>
-    </div>
-}*@
+
+    </form>
+}
 
 @code {
-    ////static string PageSize = null; 
-    //List<string> templates = new List<string>() { "A4", "Letter", "Legel"};
-    //string SelectedString = "A4";
 
-    //void DoStuff(ChangeEventArgs e)
-    //{
-    //    var SelectedString="";
-    //    SelectedString = e.Value.ToString();
-    //   // PageSize= e.Value.ToString();
-    //}
 
     @functions {
         //use @code in razor components.
-        List<string> templates = new List<string>() { "A4", "Letter", "Legel"};
+        List<string> templates = new List<string>() { "A4", "Letter","Thermal" };
         string SelectedString = "A4";
 
         void DoStuff(ChangeEventArgs e)
@@ -87,80 +49,120 @@
             SelectedString = e.Value.ToString();
             // Console.WriteLine("It is definitely: " + SelectedString);
         }
-}
-
+    }
     private void PrintDoc()
         {
 
-   var  templates =  "A4 Letter  Legel";
+    var templates = "If the blazor component is created in a web project we may not be able to reuse it in other projects. To be able to reuse a blazor component in multiple projects, create it in a razor class library project. This project can then be referenced by any project and use the Blazor component.";
+
     PrintDialog printDialog = new PrintDialog();
     FlowDocument flowDocument = new FlowDocument();
-    flowDocument.PagePadding = new Thickness(50);
+    //flowDocument.PagePadding = new Thickness(100);
+        flowDocument.FontSize = 9;
 
-     PaperSize psize = new PaperSize();
     if (SelectedString == "A4")
-        psize.RawKind = (int)PaperKind.A4;
-    else if (SelectedString == "Letter")
-        psize.RawKind = (int)PaperKind.Letter;
-    else
-        psize.RawKind = (int)PaperKind.Legal;
-     
-    
+    {
+       // printDialog.PrintTicket.PageMediaSize=new PageMediaSize(PageMediaSizeName.ISOA7,280,397);
+        flowDocument.PageWidth = 794 ;
+        flowDocument.PageHeight = 1123;
+    }
+    else if(SelectedString == "Letter")
+    {
+        //printDialog.PrintTicket.PageMediaSize= new PageMediaSize(PageMediaSizeName.NorthAmericaLetter);
+         flowDocument.PageWidth = 816;
+        flowDocument.PageHeight = 1056;
+    }
+     else if(SelectedString == "Thermal")
+    {
+        //printDialog.PrintTicket.PageMediaSize= new PageMediaSize(PageMediaSizeName.NorthAmericaLetter);
+         flowDocument.PageWidth = 300;
+        flowDocument.PageHeight = 500;
+    }
+
     flowDocument.Blocks.Add(new Paragraph(new Run(templates)));
-    printDialog.PrintDocument((((IDocumentPaginatorSource)flowDocument).DocumentPaginator), "Using Paginator");
-
-    
-    
-    ///////////////////////////////////
-    PrintDocument pd = new PrintDocument();
-    PaperSize pSize = new PaperSize();
-    if (SelectedString == "A4")
-        pSize.RawKind = (int)PaperKind.A4;
-    else if (SelectedString == "Letter")
-        pSize.RawKind = (int)PaperKind.Letter;
-    else
-        pSize.RawKind = (int)PaperKind.Legal;
-
-    pd.DefaultPageSettings.PaperSize = pSize;
-    //pd.DefaultPageSettings.Landscape = true;
     try
     {
-        pd.Print();
+
+       printDialog.PrintDocument((((IDocumentPaginatorSource)flowDocument).DocumentPaginator), "Using Paginator");
 
     }
-    catch (Exception e)
+    catch (Exception ex)
+
     {
-        throw e;
+        throw ex;
     }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //PrintDocument pd = new PrintDocument();
+
+    //if (SelectedString == "A4")
+    //{
+    //    // pd.PrinterSettings.DefaultPageSettings.PaperSize  = new PaperSize { RawKind = (int)PaperKind.A6, Height = 148, Width = 105 };
+    //    pd.PrinterSettings.DefaultPageSettings.PaperSize  = new PaperSize { RawKind = (int)PaperKind.PrcEnvelopeNumber10Rotated, Height = 350, Width = 250 };
+
+    //}
+    //else if (SelectedString == "Letter")
+    //{ 
+    //    //  pd.PrinterSettings.DefaultPageSettings.PaperSize  = new PaperSize { RawKind = (int)PaperKind.Letter, Height = 560, Width = 400 };   
+    //    pd.PrinterSettings.DefaultPageSettings.PaperSize  = new PaperSize { RawKind = (int)PaperKind.PrcEnvelopeNumber10Rotated, Height = 500, Width = 400 };   
+
+    //}
+    //var labelPaperSource = new PaperSource { RawKind = (int)PaperSourceKind.Manual }; 
+    //pd.PrinterSettings.DefaultPageSettings.PaperSource = labelPaperSource;
+    //    if (pd.PrinterSettings.CanDuplex)
+    //    {
+    //        pd.PrinterSettings.Duplex = Duplex.Default;
+    //    }  
+    //var s = " 2nd Method >>>>>>>If the blazor component is created in a web project we may not be able to reuse it in other projects. To be able to reuse a blazor component in multiple projects, create it in a razor class library project. This project can then be referenced by any project and use the Blazor component.";
+
+
+    //pd.PrintPage += delegate (object sender1, PrintPageEventArgs e)
+    //{
+    //    e.Graphics.DrawString(s, new Font("Times New Roman", 12), new SolidBrush(Color.Black), new RectangleF(20, 20, pd.PrinterSettings.DefaultPageSettings.PaperSize.Width, pd.PrinterSettings.DefaultPageSettings.PaperSize.Height));
+
+    //};
+    //try
+    //{
+    //    pd.Print();
+
+    //}
+    //catch (Exception e)
+    //{
+    //    throw e;
+    //}
+
         }
-
-    bool ShowPopup = false;
-    void PrintPopUp()
-    {
+        bool ShowPopup = false;
+        void PrintPopUp()
+        {
     // Open the Popup
     ShowPopup = true;
-    }
-
-
-    void ClosePopup()
-    { ShowPopup = false; }
-
-
-        private void InvokePrint()
-        {
-    // var PageSize = pg;
-    // Create the print dialog object and set options
-    PrintDialog pDialog = new PrintDialog();
-    pDialog.PageRangeSelection = PageRangeSelection.AllPages;
-    pDialog.UserPageRangeEnabled = true;
-
-    //// Display the dialog. This returns true if the user presses the Print button.
-    //Nullable<Boolean> print = pDialog.ShowDialog();
-    //if (print == true)
-    //{}
-    XpsDocument xpsDocument = new XpsDocument("D:\\JWT_Task.doxc", FileAccess.ReadWrite);
-    FixedDocumentSequence fixedDocSeq = xpsDocument.GetFixedDocumentSequence();
-    pDialog.PrintDocument(fixedDocSeq.DocumentPaginator, "Test print job");
-
         }
-}
+
+
+        void ClosePopup()
+        {
+    // close the Popup
+    ShowPopup = false;
+        }
+
+
+        //private void InvokePrint()
+        //{
+        //    // var PageSize = pg;
+        //    // Create the print dialog object and set options
+        //    PrintDialog pDialog = new PrintDialog();
+        //    pDialog.PageRangeSelection = PageRangeSelection.AllPages;
+        //    pDialog.UserPageRangeEnabled = true;
+
+        //    //// Display the dialog. This returns true if the user presses the Print button.
+        //    //Nullable<Boolean> print = pDialog.ShowDialog();
+        //    //if (print == true)
+        //    //{}
+        //    XpsDocument xpsDocument = new XpsDocument("D:\\JWT_Task.doxc", FileAccess.ReadWrite);
+        //    FixedDocumentSequence fixedDocSeq = xpsDocument.GetFixedDocumentSequence();
+        //    pDialog.PrintDocument(fixedDocSeq.DocumentPaginator, "Test print job");
+
+        //}
+        }
+

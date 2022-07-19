@@ -12,13 +12,8 @@
         <blazor:BlazorWebView HostPage="wwwroot\index.html" Services="{DynamicResource services}" d:IsHidden="True">
             <blazor:BlazorWebView.RootComponents>
                 <blazor:RootComponent Selector="#app" ComponentType="{x:Type local:PrintText}" />
-
             </blazor:BlazorWebView.RootComponents>
-
-
         </blazor:BlazorWebView>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="86,66,0,0" VerticalAlignment="Top"/>
-        <Button Content="Button" HorizontalAlignment="Left" Height="70" Margin="277,190,0,0" VerticalAlignment="Top" Width="157"/>
-       
+
     </Grid>
 </Window>

@@ -24,7 +24,6 @@ namespace WpfAppBlazor
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddWpfBlazorWebView();
             Resources.Add("services", serviceCollection.BuildServiceProvider());
-         //   Resources.Add("services", serviceCollection.AddScoped<IPrintingService, PrintingService>());
 
             
         }
